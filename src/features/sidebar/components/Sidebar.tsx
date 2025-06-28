@@ -34,19 +34,27 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Logo and Puzzle Type Selector */}
       <div className='p-4 border-b border-gray-700'>
         <div className='flex items-center justify-between'>
-          <div
-            className={`font-bold text-xl transition-opacity duration-300 ${
-              isOpen ? 'opacity-100' : 'opacity-0'
-            }`}
-          >
-            Prism
+          {/* Logo and Text Container */}
+          <div className='flex items-center'>
+            {/* Logo (always visible) */}
+            <img src='/logo192.png' alt='Prism' className='w-8 h-8' />
+            {/* Text (only visible when open) */}
+            <span
+              className={`ml-3 font-bold text-xl tracking-wider transition-opacity duration-300 ${
+                isOpen ? 'opacity-100' : 'opacity-0'
+              } ${!isOpen ? 'hidden' : ''}`}
+            >
+              Prism
+            </span>
           </div>
+
+          {/* Puzzle Type Selector */}
           <select
             value={puzzleType}
             onChange={(e) => setPuzzleType(e.target.value)}
             className={`bg-gray-700 text-white px-2 py-1 rounded text-sm border border-gray-600 mr-3 transition-opacity duration-300 ${
               isOpen ? 'opacity-100' : 'opacity-0'
-            }`}
+            } ${!isOpen ? 'hidden' : ''}`}
           >
             <option value='333'>3x3</option>
             <option value='444'>4x4</option>
@@ -81,7 +89,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <span
             className={`ml-3 transition-opacity duration-300 ${
               isOpen ? 'opacity-100' : 'opacity-0'
-            }`}
+            } ${!isOpen ? 'hidden' : ''}`}
           >
             Timer
           </span>
@@ -109,7 +117,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <span
             className={`ml-3 transition-opacity duration-300 ${
               isOpen ? 'opacity-100' : 'opacity-0'
-            }`}
+            } ${!isOpen ? 'hidden' : ''}`}
           >
             Solves
           </span>

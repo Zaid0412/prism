@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { start, stop, reset } from '../timerSlice';
 import { addSolve } from '../../solves/solvesSlice';
@@ -20,11 +20,11 @@ const Timer: React.FC<{ puzzleType: string }> = ({ puzzleType }) => {
 
   
   // Generate new scramble
-  const generateScramble = () => {
+  const generateScramble = useCallback(() => {
     const scrambow = new Scrambow().setType(puzzleType);
     const scrambles = scrambow.get(1);
     setCurrentScramble(scrambles[0].scramble_string);
-  };
+  }, []);
 
   // Generate initial scramble
   useEffect(() => {
@@ -142,10 +142,6 @@ const Timer: React.FC<{ puzzleType: string }> = ({ puzzleType }) => {
         className={`text-6xl font-mono my-8 transition-colors duration-100 ${getTimerColor()}`}
       >
         {(display / 1000).toFixed(2)}
-      </div>
-      <div className='text-lg text-gray-400 mb-4'>
-        Hold spacebar for {(holdDuration / 1000).toFixed(1)}s, then release to
-        start timer
       </div>
       <div className='text-sm text-gray-500 max-w-md text-center'>
         Scramble: {currentScramble}
