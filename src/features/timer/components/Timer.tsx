@@ -20,16 +20,16 @@ const Timer: React.FC<{ puzzleType: string }> = ({ puzzleType }) => {
 
   
   // Generate new scramble
-  const generateScramble = useCallback(() => {
-    const scrambow = new Scrambow().setType(puzzleType);
-    const scrambles = scrambow.get(1);
-    setCurrentScramble(scrambles[0].scramble_string);
-  }, []);
+const generateScramble = useCallback(() => {
+  const scrambow = new Scrambow().setType(puzzleType);
+  const scrambles = scrambow.get(1);
+  setCurrentScramble(scrambles[0].scramble_string);
+}, [puzzleType]);
 
   // Generate initial scramble
   useEffect(() => {
     generateScramble();
-  }, [puzzleType]);
+  }, [generateScramble]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
