@@ -9,6 +9,66 @@ interface SidebarProps {
   setPuzzleType: (type: string) => void;
 }
 
+// Navigation items configuration
+const navigationItems = [
+  {
+    path: '/',
+    label: 'Timer',
+    icon: (
+      <svg
+        className='w-5 h-5'
+        fill='none'
+        stroke='currentColor'
+        viewBox='0 0 24 24'
+      >
+        <path
+          strokeLinecap='round'
+          strokeLinejoin='round'
+          strokeWidth={2}
+          d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'
+        />
+      </svg>
+    ),
+  },
+  {
+    path: '/solves',
+    label: 'Solves',
+    icon: (
+      <svg
+        className='w-5 h-5'
+        fill='none'
+        stroke='currentColor'
+        viewBox='0 0 24 24'
+      >
+        <path
+          strokeLinecap='round'
+          strokeLinejoin='round'
+          strokeWidth={2}
+          d='M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2'
+        />
+      </svg>
+    ),
+  },
+  {
+    path: '/algorithms',
+    label: 'Algorithms',
+    icon: (
+      <svg className='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+        <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z' />
+      </svg>
+    ),
+  },
+];
+
+// Puzzle type options
+const puzzleTypes = [
+  { value: '333', label: '3x3' },
+  { value: '444', label: '4x4' },
+  { value: '555', label: '5x5' },
+  { value: '666', label: '6x6' },
+  { value: '777', label: '7x7' },
+];
+
 export const Sidebar: React.FC<SidebarProps> = ({
   isOpen,
   toggleSidebar,
@@ -56,72 +116,35 @@ export const Sidebar: React.FC<SidebarProps> = ({
               isOpen ? 'opacity-100' : 'opacity-0'
             } ${!isOpen ? 'hidden' : ''}`}
           >
-            <option value='333'>3x3</option>
-            <option value='444'>4x4</option>
-            <option value='555'>5x5</option>
-            <option value='666'>6x6</option>
-            <option value='777'>7x7</option>
+            {puzzleTypes.map((type) => (
+              <option key={type.value} value={type.value}>
+                {type.label}
+              </option>
+            ))}
           </select>
         </div>
       </div>
 
       {/* Navigation links */}
       <nav className='mt-4'>
-        <Link
-          to='/'
-          className={`flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors ${
-            location.pathname === '/' ? 'bg-gray-700 text-white' : ''
-          }`}
-        >
-          <svg
-            className='w-5 h-5'
-            fill='none'
-            stroke='currentColor'
-            viewBox='0 0 24 24'
+        {navigationItems.map((item) => (
+          <Link
+            key={item.path}
+            to={item.path}
+            className={`flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors ${
+              location.pathname === item.path ? 'bg-gray-700 text-white' : ''
+            }`}
           >
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth={2}
-              d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'
-            />
-          </svg>
-          <span
-            className={`ml-3 transition-opacity duration-300 ${
-              isOpen ? 'opacity-100' : 'opacity-0'
-            } ${!isOpen ? 'hidden' : ''}`}
-          >
-            Timer
-          </span>
-        </Link>
-
-        <Link
-          to='/solves'
-          className={`flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors ${
-            location.pathname === '/solves' ? 'bg-gray-700 text-white' : ''
-          }`}
-        >
-          <svg
-            className='w-5 h-5'
-            fill='none'
-            stroke='currentColor'
-            viewBox='0 0 24 24'
-          >
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth={2}
-              d='M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2'
-            />
-          </svg>
-          <span
-            className={`ml-3 transition-opacity duration-300 ${
-              isOpen ? 'opacity-100' : 'opacity-0'
-            } ${!isOpen ? 'hidden' : ''}`}
-          >
-            Solves
-          </span>
-        </Link>
+            {item.icon}
+            <span
+              className={`ml-3 transition-opacity duration-300 ${
+                isOpen ? 'opacity-100' : 'opacity-0'
+              } ${!isOpen ? 'hidden' : ''}`}
+            >
+              {item.label}
+            </span>
+          </Link>
+        ))}
       </nav>
     </div>
   );
