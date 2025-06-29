@@ -137,20 +137,25 @@ const Timer: React.FC<{ puzzleType: string }> = ({ puzzleType }) => {
   ]);
 
   return (
-    <div className='flex flex-col items-center'>
-      {/* Statistics */}
-      <Stats puzzleType={puzzleType} />
+    <div className='relative w-full h-full'>
+      {/* Main Timer Content - Centered */}
+      <div className='flex flex-col items-center justify-center min-h-screen'>
+        {/* Timer */}
+        <div
+          className={`text-6xl font-mono my-8 transition-colors duration-100 ${getTimerColor()}`}
+        >
+          {(display / 1000).toFixed(2)}
+        </div>
 
-      {/* Timer */}
-      <div
-        className={`text-6xl font-mono my-8 transition-colors duration-100 ${getTimerColor()}`}
-      >
-        {(display / 1000).toFixed(2)}
+        {/* Scramble */}
+        <div className='text-sm text-gray-500 max-w-md text-center'>
+          Scramble: {currentScramble}
+        </div>
       </div>
 
-      {/* Scramble */}
-      <div className='text-sm text-gray-500 max-w-md text-center'>
-        Scramble: {currentScramble}
+      {/* Statistics - Bottom Right */}
+      <div className='absolute bottom-4 right-4'>
+        <Stats puzzleType={puzzleType} />
       </div>
     </div>
   );
