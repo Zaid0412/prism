@@ -9,7 +9,7 @@ export const ScrambleDisplay: React.FC<ScrambleDisplayProps> = ({
 }) => {
   return (
     <div className='text-sm text-gray-500 max-w-md text-center'>
-      Scramble: {scramble}
+      {scramble}
     </div>
   );
 };

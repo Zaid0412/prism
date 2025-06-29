@@ -62,6 +62,8 @@ const Timer: React.FC<{ puzzleType: string }> = ({ puzzleType }) => {
     <div className='relative w-full h-full overflow-hidden'>
       {/* Main Timer Content - Centered */}
       <div className='flex flex-col items-center justify-center min-h-screen'>
+        {/* Scramble */}
+        <ScrambleDisplay scramble={currentScramble} />
         {/* Timer */}
         <TimerDisplay display={getTimerDisplay()} color={getTimerColor()} />
 
@@ -76,14 +78,14 @@ const Timer: React.FC<{ puzzleType: string }> = ({ puzzleType }) => {
           isPlusTwo={isPlusTwo}
           isDNF={isDNF}
         />
-
-        {/* Scramble */}
-        <ScrambleDisplay scramble={currentScramble} />
       </div>
 
       {/* Statistics - Bottom Right */}
       <div className='absolute bottom-4 right-4'>
-        <StatsDropdown puzzleType={puzzleType} currentScramble={currentScramble} />
+        <StatsDropdown
+          puzzleType={puzzleType}
+          currentScramble={currentScramble}
+        />
       </div>
     </div>
   );
