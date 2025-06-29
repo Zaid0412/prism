@@ -24,7 +24,7 @@ export const Stats: React.FC<StatsProps> = ({ puzzleType }) => {
   const currentAvg = calculateCurrentAverage(puzzleSolves);
 
   return (
-    <div className='bg-gray-800 rounded-lg p-4 pt-8 w-96'>
+    <div className='bg-gray-800 rounded-lg p-4 pt-8 w-96 h-86'>
       <div className='grid grid-cols-2 gap-4'>
         <div className='text-center'>
           <div className='text-sm text-gray-400'>PB</div>

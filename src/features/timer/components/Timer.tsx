@@ -1,12 +1,12 @@
 import React from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { Stats } from './Stats';
 import { ActionButtons } from './ActionButtons';
 import { TimerDisplay } from './TimerDisplay';
 import { ScrambleDisplay } from './ScrambleDisplay';
 import { useTimer } from '../hooks/useTimer';
 import { useScramble } from '../hooks/useScramble';
 import { useKeyboardControls } from '../hooks/useKeyboardControls';
+import { StatsDropdown } from './StatsDropdown';
 
 const Timer: React.FC<{ puzzleType: string }> = ({ puzzleType }) => {
   const dispatch = useAppDispatch();
@@ -59,7 +59,7 @@ const Timer: React.FC<{ puzzleType: string }> = ({ puzzleType }) => {
   const isDNF = currentSolve?.state === 'DNF';
 
   return (
-    <div className='relative w-full h-full'>
+    <div className='relative w-full h-full overflow-hidden'>
       {/* Main Timer Content - Centered */}
       <div className='flex flex-col items-center justify-center min-h-screen'>
         {/* Timer */}
@@ -83,7 +83,7 @@ const Timer: React.FC<{ puzzleType: string }> = ({ puzzleType }) => {
 
       {/* Statistics - Bottom Right */}
       <div className='absolute bottom-4 right-4'>
-        <Stats puzzleType={puzzleType} />
+        <StatsDropdown puzzleType={puzzleType} currentScramble={currentScramble} />
       </div>
     </div>
   );
