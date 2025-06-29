@@ -1,7 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { start, stop, reset } from '../timerSlice';
-import { addSolve } from '../../solves/solvesSlice';
+import {
+  addSolve,
+  updateSolveState,
+  deleteSolve,
+} from '../../solves/solvesSlice';
 import { Scrambow } from 'scrambow';
 import { Stats } from './Stats';
 
@@ -10,6 +14,7 @@ const Timer: React.FC<{ puzzleType: string }> = ({ puzzleType }) => {
   const { running, elapsed, startTime } = useAppSelector(
     (state) => state.timer,
   );
+  const solves = useAppSelector((state) => state.solves.solves);
   const [display, setDisplay] = useState(elapsed);
   const [currentScramble, setCurrentScramble] = useState('');
   const [spacebarHeld, setSpacebarHeld] = useState(false);
@@ -18,6 +23,7 @@ const Timer: React.FC<{ puzzleType: string }> = ({ puzzleType }) => {
   const [holdDuration] = useState(500); // 0.5 seconds in milliseconds
   const [holdProgress, setHoldProgress] = useState(0);
   const [copyAnimation, setCopyAnimation] = useState(false);
+  const [justDeleted, setJustDeleted] = useState(false);
 
   // Generate new scramble
   const generateScramble = useCallback(() => {
@@ -69,6 +75,29 @@ const Timer: React.FC<{ puzzleType: string }> = ({ puzzleType }) => {
     return 'text-white';
   };
 
+  // Get timer display text based on last solve state
+  const getTimerDisplay = () => {
+    if (running) {
+      return (display / 1000).toFixed(2);
+    }
+
+    if (justDeleted) {
+      return '0.00';
+    }
+
+    const lastSolve = solves[0];
+    if (!lastSolve) {
+      return '0.00';
+    }
+    if (lastSolve.state === 'DNF') {
+      return 'DNF';
+    }
+    if (lastSolve.state === '+2') {
+      return ((lastSolve.time + 2000) / 1000).toFixed(2);
+    }
+    return (lastSolve.time / 1000).toFixed(2);
+  };
+
   // Action button handlers
   const copyScramble = async () => {
     try {
@@ -84,20 +113,34 @@ const Timer: React.FC<{ puzzleType: string }> = ({ puzzleType }) => {
     generateScramble();
   };
 
-  const addPlusTwo = () => {
-    // TODO: Implement +2 functionality
-    console.log('+2 penalty added');
+  const togglePlusTwo = () => {
+    const lastSolve = solves[0]; // Most recent solve
+    if (lastSolve) {
+      const newState = lastSolve.state === '+2' ? 'none' : '+2';
+      dispatch(updateSolveState({ id: lastSolve.id, state: newState }));
+    }
   };
 
-  const markAsDNF = () => {
-    // TODO: Implement DNF functionality
-    console.log('Marked as DNF');
+  const toggleDNF = () => {
+    const lastSolve = solves[0]; // Most recent solve
+    if (lastSolve) {
+      const newState = lastSolve.state === 'DNF' ? 'none' : 'DNF';
+      dispatch(updateSolveState({ id: lastSolve.id, state: newState }));
+    }
   };
 
-  const deleteLastSolve = () => {
-    // TODO: Implement delete last solve functionality
-    console.log('Delete last solve');
-  };
+const deleteLastSolve = () => {
+  const lastSolve = solves[0];
+  if (lastSolve) {
+    dispatch(deleteSolve(lastSolve.id));
+    setJustDeleted(true);
+  }
+};
+
+  // Get current state of last solve for button styling
+  const lastSolve = solves[0];
+  const isPlusTwo = lastSolve?.state === '+2';
+  const isDNF = lastSolve?.state === 'DNF';
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -120,9 +163,11 @@ const Timer: React.FC<{ puzzleType: string }> = ({ puzzleType }) => {
               time: Date.now() - (startTime ?? Date.now()),
               scramble: currentScramble,
               puzzleType: puzzleType,
+              state: 'none', // Default state
               date: new Date().toISOString(),
             }),
           );
+          setJustDeleted(false);
           // Generate new scramble after solve
           generateScramble();
         }
@@ -139,6 +184,7 @@ const Timer: React.FC<{ puzzleType: string }> = ({ puzzleType }) => {
 
           // Only start timer if held for the required duration
           if (holdTime >= holdDuration) {
+            setJustDeleted(false);
             dispatch(start());
           }
         }
@@ -175,7 +221,7 @@ const Timer: React.FC<{ puzzleType: string }> = ({ puzzleType }) => {
         <div
           className={`text-6xl font-mono my-8 transition-colors duration-100 ${getTimerColor()}`}
         >
-          {(display / 1000).toFixed(2)}
+          {getTimerDisplay()}
         </div>
 
         {/* Action Buttons */}
@@ -241,9 +287,15 @@ const Timer: React.FC<{ puzzleType: string }> = ({ puzzleType }) => {
           </button>
 
           <button
-            onClick={addPlusTwo}
-            className='hover:bg-gray-700 text-white p-3 rounded transition-colors'
-            title='Add +2 penalty to last solve'
+            onClick={togglePlusTwo}
+            className={`p-3 rounded transition-colors ${
+              isPlusTwo
+                ? 'bg-yellow-600 text-white'
+                : 'hover:bg-gray-700 text-white'
+            }`}
+            title={
+              isPlusTwo ? 'Remove +2 penalty' : 'Add +2 penalty to last solve'
+            }
           >
             <svg
               className='w-5 h-5'
@@ -261,9 +313,11 @@ const Timer: React.FC<{ puzzleType: string }> = ({ puzzleType }) => {
           </button>
 
           <button
-            onClick={markAsDNF}
-            className='hover:bg-gray-700 text-white p-3 rounded transition-colors'
-            title='Mark last solve as DNF'
+            onClick={toggleDNF}
+            className={`p-3 rounded transition-colors ${
+              isDNF ? 'bg-red-600 text-white' : 'hover:bg-gray-700 text-white'
+            }`}
+            title={isDNF ? 'Remove DNF' : 'Mark last solve as DNF'}
           >
             <svg
               className='w-5 h-5'

@@ -4,6 +4,7 @@ export interface Solve {
   scramble: string;
   date: string;
   puzzleType: string;
+  state: 'none' | '+2' | 'DNF';
 }
 
 // Calculate average of n solves, excluding best and worst times
@@ -11,7 +12,16 @@ export const calculateAoN = (solves: Solve[], n: number): number | null => {
   if (solves.length < n) return null;
 
   const recentSolves = solves.slice(0, n);
-  const times = recentSolves.map((solve) => solve.time).sort((a, b) => a - b);
+  const validSolves = recentSolves.filter((solve) => solve.state !== 'DNF');
+
+  if (validSolves.length < n) return null;
+
+  const times = validSolves
+    .map((solve) => {
+      // Add +2 penalty (2 seconds = 2000ms) if state is '+2'
+      return solve.state === '+2' ? solve.time + 2000 : solve.time;
+    })
+    .sort((a, b) => a - b);
 
   // Remove best and worst times
   times.shift(); // Remove best
@@ -23,21 +33,39 @@ export const calculateAoN = (solves: Solve[], n: number): number | null => {
 
 // Calculate personal best
 export const calculatePB = (solves: Solve[]): number | null => {
-  if (solves.length === 0) return null;
-  return Math.min(...solves.map((solve) => solve.time));
+  const validSolves = solves.filter((solve) => solve.state !== 'DNF');
+  if (validSolves.length === 0) return null;
+
+  const times = validSolves.map((solve) => {
+    return solve.state === '+2' ? solve.time + 2000 : solve.time;
+  });
+
+  return Math.min(...times);
 };
 
 // Calculate personal worst
 export const calculatePW = (solves: Solve[]): number | null => {
-  if (solves.length === 0) return null;
-  return Math.max(...solves.map((solve) => solve.time));
+  const validSolves = solves.filter((solve) => solve.state !== 'DNF');
+  if (validSolves.length === 0) return null;
+
+  const times = validSolves.map((solve) => {
+    return solve.state === '+2' ? solve.time + 2000 : solve.time;
+  });
+
+  return Math.max(...times);
 };
 
 // Calculate current average
 export const calculateCurrentAverage = (solves: Solve[]): number | null => {
-  if (solves.length === 0) return null;
-  const total = solves.reduce((sum, solve) => sum + solve.time, 0);
-  return total / solves.length;
+  const validSolves = solves.filter((solve) => solve.state !== 'DNF');
+  if (validSolves.length === 0) return null;
+
+  const total = validSolves.reduce((sum, solve) => {
+    const time = solve.state === '+2' ? solve.time + 2000 : solve.time;
+    return sum + time;
+  }, 0);
+
+  return total / validSolves.length;
 };
 
 // Format time for display
@@ -52,4 +80,14 @@ export const getSolvesForPuzzleType = (
   puzzleType: string,
 ): Solve[] => {
   return solves.filter((solve) => solve.puzzleType === puzzleType);
+};
+
+// Get solve count excluding DNFs
+export const getValidSolveCount = (solves: Solve[]): number => {
+  return solves.filter((solve) => solve.state !== 'DNF').length;
+};
+
+// Get DNF count
+export const getDNFCount = (solves: Solve[]): number => {
+  return solves.filter((solve) => solve.state === 'DNF').length;
 };
