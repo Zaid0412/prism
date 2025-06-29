@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
+import { SolveModal } from './SolveModal';
 
 interface SolveProps {
   solve: {
@@ -67,24 +68,45 @@ const formatPuzzleType = (puzzleType: string) => {
 };
 
 export const Solve: React.FC<SolveProps> = ({ solve, index, totalSolves }) => {
-  return (
-    <li className='flex justify-between items-center px-4 py-3 hover:bg-gray-750 transition-colors'>
-      <div className='flex items-center space-x-2'>
-        <span className='text-gray-400'>#{totalSolves - index}</span>
-        <span className='text-xs bg-gray-700 px-2 py-1 rounded'>
-          {formatPuzzleType(solve.puzzleType)}
-        </span>
-        {getStateBadge(solve.state)}
-      </div>
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-      <div className='flex flex-col items-end'>
-        <span className={`font-mono text-lg ${getStateColor(solve.state)}`}>
-          {formatTime(solve.time, solve.state)}
-        </span>
-        <span className='text-xs text-gray-400'>
-          {formatDistanceToNow(new Date(solve.date))}
-        </span>
-      </div>
-    </li>
+  const handleClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  return (
+    <>
+      <li
+        className='flex justify-between items-center px-4 py-3 hover:bg-gray-750 transition-colors cursor-pointer'
+        onClick={handleClick}
+      >
+        <div className='flex items-center space-x-2'>
+          <span className='text-gray-400'>#{totalSolves - index}</span>
+          <span className='text-xs bg-gray-700 px-2 py-1 rounded'>
+            {formatPuzzleType(solve.puzzleType)}
+          </span>
+          {getStateBadge(solve.state)}
+        </div>
+
+        <div className='flex flex-col items-end'>
+          <span className={`font-mono text-lg ${getStateColor(solve.state)}`}>
+            {formatTime(solve.time, solve.state)}
+          </span>
+          <span className='text-xs text-gray-400'>
+            {formatDistanceToNow(new Date(solve.date))}
+          </span>
+        </div>
+      </li>
+
+      <SolveModal
+        solve={solve}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
+    </>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useAppSelector } from '../../../app/hooks';
-import { Solve } from '../Solve';
+import { Solve } from './Solve';
 
 const SolvesList: React.FC = () => {
   const solves = useAppSelector((state) => state.solves.solves);
