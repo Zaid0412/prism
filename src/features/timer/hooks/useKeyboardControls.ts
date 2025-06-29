@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { AppDispatch } from '../../../app/store';
 import { updateSolveState, deleteSolve } from '../../solves/solvesSlice';
 import { addSolve } from '../../solves/solvesSlice';
@@ -30,27 +30,31 @@ export const useKeyboardControls = (
   setHoldStartTime: (value: number | null) => void,
   setJustStopped: (value: boolean) => void,
 ) => {
-  // Action button handlers
+  // Track the current solve ID that can be edited
+  const [currentSolveId, setCurrentSolveId] = useState<string | null>(null);
+
+  // Action button handlers - only work on the current solve
   const togglePlusTwo = () => {
-    const lastSolve = solves[0]; // Most recent solve
-    if (lastSolve) {
-      const newState = lastSolve.state === '+2' ? 'none' : '+2';
-      dispatch(updateSolveState({ id: lastSolve.id, state: newState }));
+    const currentSolve = solves.find((solve) => solve.id === currentSolveId);
+    if (currentSolve) {
+      const newState = currentSolve.state === '+2' ? 'none' : '+2';
+      dispatch(updateSolveState({ id: currentSolve.id, state: newState }));
     }
   };
 
   const toggleDNF = () => {
-    const lastSolve = solves[0]; // Most recent solve
-    if (lastSolve) {
-      const newState = lastSolve.state === 'DNF' ? 'none' : 'DNF';
-      dispatch(updateSolveState({ id: lastSolve.id, state: newState }));
+    const currentSolve = solves.find((solve) => solve.id === currentSolveId);
+    if (currentSolve) {
+      const newState = currentSolve.state === 'DNF' ? 'none' : 'DNF';
+      dispatch(updateSolveState({ id: currentSolve.id, state: newState }));
     }
   };
 
   const deleteLastSolve = () => {
-    const lastSolve = solves[0];
-    if (lastSolve) {
-      dispatch(deleteSolve(lastSolve.id));
+    const currentSolve = solves.find((solve) => solve.id === currentSolveId);
+    if (currentSolve) {
+      dispatch(deleteSolve(currentSolve.id));
+      setCurrentSolveId(null); // Clear current solve ID after deletion
       setJustDeleted(true);
     }
   };
@@ -71,9 +75,10 @@ export const useKeyboardControls = (
           // Stop timer when spacebar is pressed (if running)
           dispatch(stop());
           setJustStopped(true);
+          const newSolveId = crypto.randomUUID();
           dispatch(
             addSolve({
-              id: crypto.randomUUID(),
+              id: newSolveId,
               time: Date.now() - (startTime ?? Date.now()),
               scramble: currentScramble,
               puzzleType: puzzleType,
@@ -81,6 +86,7 @@ export const useKeyboardControls = (
               date: new Date().toISOString(),
             }),
           );
+          setCurrentSolveId(newSolveId); // Set this as the current solve
           setJustDeleted(false);
           // Generate new scramble after solve
           generateScramble();
@@ -135,5 +141,6 @@ export const useKeyboardControls = (
     togglePlusTwo,
     toggleDNF,
     deleteLastSolve,
+    currentSolveId,
   };
 };

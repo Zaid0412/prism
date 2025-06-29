@@ -35,7 +35,7 @@ const Timer: React.FC<{ puzzleType: string }> = ({ puzzleType }) => {
     generateNewScramble,
   } = useScramble(puzzleType);
 
-  const { togglePlusTwo, toggleDNF, deleteLastSolve } = useKeyboardControls(
+  const { togglePlusTwo, toggleDNF, deleteLastSolve, currentSolveId } = useKeyboardControls(
     solves,
     currentScramble,
     puzzleType,
@@ -53,10 +53,10 @@ const Timer: React.FC<{ puzzleType: string }> = ({ puzzleType }) => {
     setJustStopped,
   );
 
-  // Get current state of last solve for button styling
-  const lastSolve = solves[0];
-  const isPlusTwo = lastSolve?.state === '+2';
-  const isDNF = lastSolve?.state === 'DNF';
+  // Get current solve for button styling - only if it's the current solve
+  const currentSolve = solves.find(solve => solve.id === currentSolveId);
+  const isPlusTwo = currentSolve?.state === '+2';
+  const isDNF = currentSolve?.state === 'DNF';
 
   return (
     <div className='relative w-full h-full'>
