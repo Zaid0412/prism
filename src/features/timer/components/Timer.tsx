@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { start, stop, reset } from '../timerSlice';
 import { addSolve } from '../../solves/solvesSlice';
 import { Scrambow } from 'scrambow';
+import { Stats } from './Stats';
 
 const Timer: React.FC<{ puzzleType: string }> = ({ puzzleType }) => {
   const dispatch = useAppDispatch();
@@ -10,7 +11,6 @@ const Timer: React.FC<{ puzzleType: string }> = ({ puzzleType }) => {
     (state) => state.timer,
   );
   const [display, setDisplay] = useState(elapsed);
-  // const [puzzleType, setPuzzleType] = useState('333'); // Default to 3x3
   const [currentScramble, setCurrentScramble] = useState('');
   const [spacebarHeld, setSpacebarHeld] = useState(false);
   const [justStopped, setJustStopped] = useState(false);
@@ -18,13 +18,12 @@ const Timer: React.FC<{ puzzleType: string }> = ({ puzzleType }) => {
   const [holdDuration] = useState(500); // 0.5 seconds in milliseconds
   const [holdProgress, setHoldProgress] = useState(0);
 
-  
   // Generate new scramble
-const generateScramble = useCallback(() => {
-  const scrambow = new Scrambow().setType(puzzleType);
-  const scrambles = scrambow.get(1);
-  setCurrentScramble(scrambles[0].scramble_string);
-}, [puzzleType]);
+  const generateScramble = useCallback(() => {
+    const scrambow = new Scrambow().setType(puzzleType);
+    const scrambles = scrambow.get(1);
+    setCurrentScramble(scrambles[0].scramble_string);
+  }, [puzzleType]);
 
   // Generate initial scramble
   useEffect(() => {
@@ -134,15 +133,22 @@ const generateScramble = useCallback(() => {
     holdStartTime,
     holdDuration,
     dispatch,
+    generateScramble,
   ]);
 
   return (
     <div className='flex flex-col items-center'>
+      {/* Statistics */}
+      <Stats puzzleType={puzzleType} />
+
+      {/* Timer */}
       <div
         className={`text-6xl font-mono my-8 transition-colors duration-100 ${getTimerColor()}`}
       >
         {(display / 1000).toFixed(2)}
       </div>
+
+      {/* Scramble */}
       <div className='text-sm text-gray-500 max-w-md text-center'>
         Scramble: {currentScramble}
       </div>
