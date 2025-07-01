@@ -4,7 +4,7 @@ module.exports = function(app) {
   app.use(
     '/api',
     createProxyMiddleware({
-      target: 'http://localhost:3001',
+      target: 'https://prism-backend-8lk5.onrender.com',
       changeOrigin: true,
     })
   );
