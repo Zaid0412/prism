@@ -104,7 +104,7 @@ export const Solve: React.FC<SolveProps> = ({ solve, index, totalSolves }) => {
       </li>
 
       <SolveModal
-        solve={solve}
+        solve={{ ...solve, createdAt: solve.createdAt ?? String(solve.timestamp) }}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
       />

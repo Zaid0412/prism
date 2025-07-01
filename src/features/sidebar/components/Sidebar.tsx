@@ -83,21 +83,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
         isOpen ? 'w-64' : 'w-16'
       }`}
     >
-      {/* Toggle button */}
-      <button
-        onClick={toggleSidebar}
-        className='absolute -right-3 top-6 bg-gray-800 text-white p-1 rounded-full border border-gray-600 hover:bg-gray-700 transition-colors'
-      >
-        <ArrowIcon isOpen={isOpen} />
-      </button>
-
       {/* Logo and Puzzle Type Selector */}
       <div className='p-4 border-b border-gray-700'>
         <div className='flex items-center justify-between'>
           {/* Logo and Text Container */}
           <div className='flex items-center'>
             {/* Logo (always visible) */}
-            <img src='/logo192.png' alt='Prism' className='w-8 h-8' />
+            <img src='/logo192.png' alt='Prism' className='w-8 h-8 min-w-[2rem] max-w-[2rem]' />
             {/* Text (only visible when open) */}
             <span
               className={`ml-3 font-bold text-xl tracking-wider transition-opacity duration-300 ${
@@ -154,6 +146,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </Link>
         ))}
       </nav>
+
+      {/* Collapse/Expand control at the bottom */}
+      <div className="absolute bottom-0 left-0 w-full flex items-center justify-center pb-4">
+        <button
+          onClick={toggleSidebar}
+          className="flex items-center justify-center w-full text-gray-300 hover:text-white focus:outline-none"
+        >
+          {isOpen ? (
+            <>
+              <span className="text-2xl font-bold mr-2">←</span>
+              <span className="font-medium">Collapse</span>
+            </>
+          ) : (
+            <span className="text-2xl font-bold">→</span>
+          )}
+        </button>
+      </div>
     </div>
   );
 };

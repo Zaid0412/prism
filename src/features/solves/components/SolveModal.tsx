@@ -8,6 +8,7 @@ interface SolveModalProps {
     puzzleType: string;
     state: 'none' | '+2' | 'DNF';
     timestamp: number;
+    createdAt: string;
   };
   isOpen: boolean;
   onClose: () => void;
@@ -142,7 +143,14 @@ export const SolveModal: React.FC<SolveModalProps> = ({
 
           {/* Date */}
           <div className='text-sm text-gray-400'>
-            {new Date(solve.timestamp).toLocaleString()}
+            {new Date(solve.createdAt).toLocaleString(undefined, {
+              year: 'numeric',
+              month: 'numeric',
+              day: 'numeric',
+              hour: 'numeric',
+              minute: '2-digit',
+              hour12: true
+            })}
           </div>
 
           {/* Scramble Visualization */}
