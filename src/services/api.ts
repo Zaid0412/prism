@@ -1,5 +1,4 @@
-// src/services/api.ts
-const API_BASE_URL = 'http://localhost:3001/api'; // Adjust port if different
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3001/api';
 
 export interface Solve {
   id: string;
@@ -19,16 +18,19 @@ class ApiClient {
 
   private async request<T>(
     endpoint: string,
+    token: string,
     options?: RequestInit,
   ): Promise<T> {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       headers: {
         'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...options?.headers,
       },
       ...options,
     });
     if (!response.ok) {
+      console.log(token);
       throw new Error(`API request failed: ${response.status} ${response.statusText}`);
     }
     // If response is 204 No Content, return undefined
@@ -39,26 +41,26 @@ class ApiClient {
   }
 
   // Solve endpoints
-  async getSolves(): Promise<Solve[]> {
-    return this.request<Solve[]>('/solves');
+  async getSolves(token: string): Promise<Solve[]> {
+    return this.request<Solve[]>('/solves', token);
   }
 
-  async createSolve(solve: Omit<Solve, 'id'>): Promise<Solve> {
-    return this.request<Solve>('/solves', {
+  async createSolve(solve: Omit<Solve, 'id'>, token: string): Promise<Solve> {
+    return this.request<Solve>('/solves', token, {
       method: 'POST',
       body: JSON.stringify(solve),
     });
   }
 
-  async updateSolve(id: string, solve: Partial<Solve>): Promise<Solve> {
-    return this.request<Solve>(`/solves/${id}`, {
+  async updateSolve(id: string, solve: Partial<Solve>, token: string): Promise<Solve> {
+    return this.request<Solve>(`/solves/${id}`, token, {
       method: 'PATCH',
       body: JSON.stringify(solve),
     });
   }
 
-  async deleteSolve(id: string): Promise<void> {
-    return this.request<void>(`/solves/${id}`, {
+  async deleteSolve(id: string, token: string): Promise<void> {
+    return this.request<void>(`/solves/${id}`, token, {
       method: 'DELETE',
     });
   }
