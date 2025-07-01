@@ -2,10 +2,18 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { apiClient, Solve } from '../../services/api';
 
+// Helper to get the current session token
+async function getClerkToken() {
+  // @ts-ignore
+  return window.Clerk?.session?.getToken() ?? null;
+}
+
 // Async thunks for API calls
 export const fetchSolves = createAsyncThunk('solves/fetchSolves', async () => {
   try {
-    return await apiClient.getSolves();
+    const token = await getClerkToken();
+    if (!token) throw new Error('No Clerk token');
+    return await apiClient.getSolves(token);
   } catch (error) {
     console.error('Failed to fetch solves:', error);
     return [];
@@ -16,7 +24,9 @@ export const createSolve = createAsyncThunk(
   'solves/createSolve',
   async (solve: Omit<Solve, 'id'>) => {
     try {
-      return await apiClient.createSolve(solve);
+      const token = await getClerkToken();
+      if (!token) throw new Error('No Clerk token');
+      return await apiClient.createSolve(solve, token);
     } catch (error) {
       console.error('Failed to create solve:', error);
       // Fallback to local storage
@@ -30,7 +40,9 @@ export const updateSolve = createAsyncThunk(
   'solves/updateSolve',
   async ({ id, solve }: { id: string; solve: Partial<Solve> }) => {
     try {
-      return await apiClient.updateSolve(id, solve);
+      const token = await getClerkToken();
+      if (!token) throw new Error('No Clerk token');
+      return await apiClient.updateSolve(id, solve, token);
     } catch (error) {
       console.error('Failed to update solve:', error);
       throw error;
@@ -42,7 +54,9 @@ export const deleteSolve = createAsyncThunk(
   'solves/deleteSolve',
   async (id: string) => {
     try {
-      await apiClient.deleteSolve(id);
+      const token = await getClerkToken();
+      if (!token) throw new Error('No Clerk token');
+      await apiClient.deleteSolve(id, token);
       return id;
     } catch (error) {
       console.error('Failed to delete solve:', error);

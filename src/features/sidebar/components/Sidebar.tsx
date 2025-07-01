@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ArrowIcon } from './ArrowIcon';
 
 interface SidebarProps {
   isOpen: boolean;
