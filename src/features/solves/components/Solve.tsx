@@ -79,8 +79,6 @@ export const Solve: React.FC<SolveProps> = ({ solve, index, totalSolves }) => {
     setIsModalOpen(false);
   };
 
-  console.log(solve);
-
   return (
     <>
       <li

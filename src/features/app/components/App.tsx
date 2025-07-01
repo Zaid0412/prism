@@ -33,8 +33,8 @@ function App() {
 
   if (!isLoaded) {
     return (
-      <div className='flex items-center justify-center min-h-screen'>
-        Loading...
+      <div className='flex items-center justify-center min-h-screen bg-gray-900 text-white'>
+        <span className="inline-block w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" role="status" aria-label="Loading" />
       </div>
     );
   }

@@ -15,8 +15,8 @@ const Header: React.FC = () => {
       <div className='text-2xl font-bold text-white'></div>
       <div>
         {!isLoaded ? null : isSignedIn ? (
-          <div className='flex items-center gap-3 p-1'>
-            <span className='text-white px-2 py-1'>
+          <div className='flex items-center gap-3'>
+            <span className='text-white px-2'>
               {user?.primaryEmailAddress?.emailAddress}
             </span>
             <UserButton afterSignOutUrl='/' />

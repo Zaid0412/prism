@@ -6,7 +6,6 @@ import Header from '../../app/components/Header';
 
 const SolvesList: React.FC = () => {
   const solves = useAppSelector((state) => state.solves.solves);
-  console.log(solves);
   const [selectedPuzzleType, setSelectedPuzzleType] = useState<string>('333');
   const [selectedState, setSelectedState] = useState<string>('all');
   const [sortField, setSortField] = useState<'date' | 'time'>('date');

@@ -28,16 +28,13 @@ class ApiClient {
       },
       ...options,
     });
-    console.log();
     if (!response.ok) {
-      throw new Error(`API request failed: ${response.statusText}`);
+      throw new Error(`API request failed: ${response.status} ${response.statusText}`);
     }
-
     // If response is 204 No Content, return undefined
     if (response.status === 204) {
       return undefined as unknown as T;
     }
-
     return response.json();
   }
 
