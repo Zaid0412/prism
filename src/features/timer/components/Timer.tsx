@@ -7,25 +7,28 @@ import { useTimer } from '../hooks/useTimer';
 import { useScramble } from '../hooks/useScramble';
 import { useKeyboardControls } from '../hooks/useKeyboardControls';
 import { StatsDropdown } from './StatsDropdown';
+import { formatTime } from '../utils/statsUtils';
+import { useTimerColor } from '../hooks/useTimerColor';
+import Header from '../../app/components/Header';
 
 const Timer: React.FC<{ puzzleType: string }> = ({ puzzleType }) => {
   const dispatch = useAppDispatch();
   const solves = useAppSelector((state) => state.solves.solves);
 
+  // Local state for keyboard/timer controls
+  const [spacebarHeld, setSpacebarHeld] = React.useState(false);
+  const [justStopped, setJustStopped] = React.useState(false);
+  const [holdStartTime, setHoldStartTime] = React.useState<number | null>(null);
+  const holdDuration = 300; // ms to hold spacebar before timer starts
+
   const {
-    running,
-    startTime,
-    spacebarHeld,
-    justStopped,
-    holdStartTime,
-    holdDuration,
-    getTimerColor,
-    getTimerDisplay,
-    setJustDeleted,
-    setSpacebarHeld,
-    setHoldStartTime,
-    setJustStopped,
-  } = useTimer();
+    time,
+    isRunning,
+    startTimer,
+    stopTimer,
+    resetTimer, 
+    setTime,
+  } = useTimer(puzzleType);
 
   const {
     currentScramble,
@@ -41,9 +44,9 @@ const Timer: React.FC<{ puzzleType: string }> = ({ puzzleType }) => {
     puzzleType,
     dispatch,
     generateScramble,
-    setJustDeleted,
-    running,
-    startTime,
+    setJustStopped,
+    isRunning,
+    time,
     spacebarHeld,
     justStopped,
     holdStartTime,
@@ -51,21 +54,33 @@ const Timer: React.FC<{ puzzleType: string }> = ({ puzzleType }) => {
     setSpacebarHeld,
     setHoldStartTime,
     setJustStopped,
+    startTimer,
+    stopTimer,
+    resetTimer,
+    setTime,
+  );
+
+  const timerColor = useTimerColor(
+    isRunning,
+    spacebarHeld,
+    holdStartTime,
+    holdDuration,
   );
 
   // Get current solve for button styling - only if it's the current solve
-  const currentSolve = solves.find(solve => solve.id === currentSolveId);
+  const currentSolve = solves.find(solve => solve.id === currentSolveId) || solves[solves.length - 1];
   const isPlusTwo = currentSolve?.state === '+2';
   const isDNF = currentSolve?.state === 'DNF';
 
   return (
-    <div className='relative w-full h-full overflow-hidden'>
+    <div className='flex flex-col h-screen w-full overflow-hidden'>
+      <Header />
       {/* Main Timer Content - Centered */}
-      <div className='flex flex-col items-center justify-center min-h-screen'>
+      <div className='flex flex-col items-center justify-center flex-1'>
         {/* Scramble */}
         <ScrambleDisplay scramble={currentScramble} />
         {/* Timer */}
-        <TimerDisplay display={getTimerDisplay()} color={getTimerColor()} />
+        <TimerDisplay display={isDNF ? 'DNF' : formatTime(time)} color={timerColor} />
 
         {/* Action Buttons */}
         <ActionButtons

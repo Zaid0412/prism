@@ -9,7 +9,8 @@ interface SolveProps {
     scramble: string;
     puzzleType: string;
     state: 'none' | '+2' | 'DNF';
-    date: string;
+    timestamp: number;
+    createdAt?: string;
   };
   index: number;
   totalSolves: number;
@@ -97,7 +98,7 @@ export const Solve: React.FC<SolveProps> = ({ solve, index, totalSolves }) => {
             {formatTime(solve.time, solve.state)}
           </span>
           <span className='text-xs text-gray-400'>
-            {formatDistanceToNow(new Date(solve.date))}
+            {formatDistanceToNow(new Date(solve.createdAt ?? solve.timestamp ?? Date.now()))}
           </span>
         </div>
       </li>

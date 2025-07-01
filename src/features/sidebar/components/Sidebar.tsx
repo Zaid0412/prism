@@ -109,19 +109,27 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
 
           {/* Puzzle Type Selector */}
-          <select
-            value={puzzleType}
-            onChange={(e) => setPuzzleType(e.target.value)}
-            className={`bg-gray-700 text-white px-2 py-1 rounded text-sm border border-gray-600 mr-3 transition-opacity duration-300 ${
-              isOpen ? 'opacity-100' : 'opacity-0'
-            } ${!isOpen ? 'hidden' : ''}`}
-          >
-            {puzzleTypes.map((type) => (
-              <option key={type.value} value={type.value}>
-                {type.label}
-              </option>
-            ))}
-          </select>
+          <div className='relative mr-3 px-2 py-1'>
+            <select
+              value={puzzleType}
+              onChange={(e) => setPuzzleType(e.target.value)}
+              className={`bg-gray-800 text-white px-3 py-2 pr-8 rounded-lg text-sm border border-gray-700 shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 hover:border-indigo-400 transition-opacity duration-300 appearance-none ${
+                isOpen ? 'opacity-100' : 'opacity-0'
+              } ${!isOpen ? 'hidden' : ''}`}
+            >
+              {puzzleTypes.map((type) => (
+                <option key={type.value} value={type.value}>
+                  {type.label}
+                </option>
+              ))}
+            </select>
+            {/* Custom arrow icon */}
+            <span className={`pointer-events-none pr-2 absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 ${isOpen ? 'opacity-100' : 'opacity-0'} ${!isOpen ? 'hidden' : ''}`}>
+              <svg className='w-4 h-4' fill='none' stroke='currentColor' strokeWidth='2' viewBox='0 0 24 24'>
+                <path strokeLinecap='round' strokeLinejoin='round' d='M19 9l-7 7-7-7' />
+              </svg>
+            </span>
+          </div>
         </div>
       </div>
 

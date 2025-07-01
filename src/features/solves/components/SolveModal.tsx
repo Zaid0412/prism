@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-import { formatDistanceToNow } from 'date-fns';
 
 interface SolveModalProps {
   solve: {
@@ -8,7 +7,7 @@ interface SolveModalProps {
     scramble: string;
     puzzleType: string;
     state: 'none' | '+2' | 'DNF';
-    date: string;
+    timestamp: number;
   };
   isOpen: boolean;
   onClose: () => void;
@@ -143,7 +142,7 @@ export const SolveModal: React.FC<SolveModalProps> = ({
 
           {/* Date */}
           <div className='text-sm text-gray-400'>
-            {new Date(solve.date).toLocaleString()}
+            {new Date(solve.timestamp).toLocaleString()}
           </div>
 
           {/* Scramble Visualization */}
