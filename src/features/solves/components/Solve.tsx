@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { SolveModal } from './SolveModal';
+import { useAppDispatch } from '../../../app/hooks';
+import { deleteSolve, updateSolve, updateSolveLocal } from '../solvesSlice';
 
 interface SolveProps {
   solve: {
@@ -70,6 +72,7 @@ const formatPuzzleType = (puzzleType: string) => {
 
 export const Solve: React.FC<SolveProps> = ({ solve, index, totalSolves }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const dispatch = useAppDispatch();
 
   const handleClick = () => {
     setIsModalOpen(true);
@@ -77,6 +80,28 @@ export const Solve: React.FC<SolveProps> = ({ solve, index, totalSolves }) => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+  };
+
+  const handleDelete = () => {
+    dispatch(deleteSolve(solve.id));
+    setIsModalOpen(false);
+  };
+
+  const handleEdit = () => {
+    // Placeholder: open an edit modal or implement edit logic
+    alert('Edit functionality coming soon!');
+  };
+
+  const handlePlus2 = () => {
+    const newState = solve.state === '+2' ? 'none' : '+2';
+    dispatch(updateSolveLocal({ id: solve.id, solve: { state: newState } }));
+    dispatch(updateSolve({ id: solve.id, solve: { state: newState } }));
+  };
+
+  const handleDNF = () => {
+    const newState = solve.state === 'DNF' ? 'none' : 'DNF';
+    dispatch(updateSolveLocal({ id: solve.id, solve: { state: newState } }));
+    dispatch(updateSolve({ id: solve.id, solve: { state: newState } }));
   };
 
   return (
@@ -107,6 +132,10 @@ export const Solve: React.FC<SolveProps> = ({ solve, index, totalSolves }) => {
         solve={{ ...solve, createdAt: solve.createdAt ?? String(solve.timestamp) }}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
+        onDelete={handleDelete}
+        onEdit={handleEdit}
+        onPlus2={handlePlus2}
+        onDNF={handleDNF}
       />
     </>
   );
