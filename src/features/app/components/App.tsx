@@ -6,6 +6,7 @@ import SolvesList from '../../solves/components/SolvesList';
 import { Sidebar } from '../../sidebar/components/Sidebar';
 import { fetchSolves, loadSolvesFromStorage } from '../../solves/solvesSlice';
 import AuthPage from '../../auth/components/AuthPage';
+import WelcomePage from './WelcomePage';
 import { useUser } from '@clerk/clerk-react';
 
 function App() {
@@ -44,34 +45,49 @@ function App() {
       <Routes>
         <Route path='/login' element={<AuthPage />} />
         <Route path='/signup' element={<AuthPage />} />
+        <Route path='/' element={<WelcomePage />} />
         <Route
-          path='*'
+          path='/timer'
           element={
-            <>
-              <div className='min-h-screen bg-gray-900 text-white flex'>
-                <Sidebar
-                  isOpen={sidebarOpen}
-                  toggleSidebar={toggleSidebar}
-                  puzzleType={puzzleType}
-                  setPuzzleType={setPuzzleType}
-                />
-                <div
-                  className={`flex-1 transition-all duration-300 ease-in-out ${
-                    sidebarOpen ? 'ml-64' : 'ml-16'
-                  }`}
-                >
-                  <div className='flex flex-col items-center justify-center min-h-screen'>
-                    <Routes>
-                      <Route
-                        path='/'
-                        element={<Timer puzzleType={puzzleType} />}
-                      />
-                      <Route path='/solves' element={<SolvesList />} />
-                    </Routes>
-                  </div>
+            <div className='min-h-screen bg-gray-900 text-white flex'>
+              <Sidebar
+                isOpen={sidebarOpen}
+                toggleSidebar={toggleSidebar}
+                puzzleType={puzzleType}
+                setPuzzleType={setPuzzleType}
+              />
+              <div
+                className={`flex-1 transition-all duration-300 ease-in-out ${
+                  sidebarOpen ? 'ml-64' : 'ml-16'
+                }`}
+              >
+                <div className='flex flex-col items-center justify-center min-h-screen'>
+                  <Timer puzzleType={puzzleType} />
                 </div>
               </div>
-            </>
+            </div>
+          }
+        />
+        <Route
+          path='/solves'
+          element={
+            <div className='min-h-screen bg-gray-900 text-white flex'>
+              <Sidebar
+                isOpen={sidebarOpen}
+                toggleSidebar={toggleSidebar}
+                puzzleType={puzzleType}
+                setPuzzleType={setPuzzleType}
+              />
+              <div
+                className={`flex-1 transition-all duration-300 ease-in-out ${
+                  sidebarOpen ? 'ml-64' : 'ml-16'
+                }`}
+              >
+                <div className='flex flex-col items-center justify-center min-h-screen'>
+                  <SolvesList />
+                </div>
+              </div>
+            </div>
           }
         />
       </Routes>
