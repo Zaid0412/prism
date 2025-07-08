@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { AppDispatch } from '../../../app/store';
 import { updateSolve, deleteSolve } from '../../solves/solvesSlice';
 import { createSolve } from '../../solves/solvesSlice';
+import { useUser } from '@clerk/clerk-react';
+import { addSolveLocal } from '../../solves/solvesSlice';
 
 interface Solve {
   id: string;
@@ -35,6 +37,7 @@ export const useKeyboardControls = (
 ) => {
   // Track the current solve ID that can be edited
   const [currentSolveId, setCurrentSolveId] = useState<string | null>(null);
+  const { isSignedIn } = useUser();
 
   // Action button handlers - only work on the current solve
   const togglePlusTwo = () => {
@@ -103,15 +106,19 @@ export const useKeyboardControls = (
           stopTimer();
           setJustStopped(true);
           const newSolveId = crypto.randomUUID();
-          dispatch(
-            createSolve({
-              time: startTime ?? 0,
-              scramble: currentScramble,
-              puzzleType: puzzleType,
-              state: 'none', // Default state
-              timestamp: Date.now(),
-            }),
-          );
+          const solveData = {
+            time: startTime ?? 0,
+            scramble: currentScramble,
+            puzzleType: puzzleType,
+            state: "none" as "none",
+            timestamp: Date.now(),
+            id: newSolveId,
+          };
+          if (isSignedIn) {
+            dispatch(createSolve(solveData));
+          } else {
+            dispatch(addSolveLocal(solveData));
+          }
           setCurrentSolveId(newSolveId); // Set this as the current solve
           setJustDeleted(false);
           // Generate new scramble after solve
@@ -165,6 +172,7 @@ export const useKeyboardControls = (
     stopTimer,
     resetTimer,
     setTime,
+    isSignedIn,
   ]);
 
   return {

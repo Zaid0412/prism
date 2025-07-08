@@ -76,6 +76,7 @@ const solvesSlice = createSlice({
     addSolveLocal: (state, action: PayloadAction<Solve>) => {
       state.solves.push(action.payload);
       // Save to localStorage
+      console.log('Saving solves to localStorage');
       localStorage.setItem('solves', JSON.stringify(state.solves));
     },
     updateSolveLocal: (

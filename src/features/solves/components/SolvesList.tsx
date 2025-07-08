@@ -1,8 +1,9 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '../../../app/hooks';
 import { Solve } from './Solve';
-import { fetchSolves } from '../solvesSlice';
+import { fetchSolves, loadSolvesFromStorage } from '../solvesSlice';
 import Header from '../../app/components/Header';
+import { useUser } from '@clerk/clerk-react';
 
 const SolvesList: React.FC = () => {
   const solves = useAppSelector((state) => state.solves.solves);
@@ -12,9 +13,17 @@ const SolvesList: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
   const dispatch = useAppDispatch();
+  const { isSignedIn, isLoaded } = useUser();
+
   useEffect(() => {
-    dispatch(fetchSolves());
-  }, [dispatch]);
+    if (!isLoaded) return;
+    if (isSignedIn) {
+      dispatch(fetchSolves());
+    } else {
+      console.log('Loading solves from storage');
+      dispatch(loadSolvesFromStorage());
+    }
+  }, [dispatch, isSignedIn, isLoaded]);
 
   // Define available puzzle types
   const puzzleTypes = ['333', '444', '555', '666', '777'];
