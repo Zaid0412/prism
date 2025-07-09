@@ -20,7 +20,6 @@ const SolvesList: React.FC = () => {
     if (isSignedIn) {
       dispatch(fetchSolves());
     } else {
-      console.log('Loading solves from storage');
       dispatch(loadSolvesFromStorage());
     }
   }, [dispatch, isSignedIn, isLoaded]);
@@ -43,7 +42,7 @@ const SolvesList: React.FC = () => {
       let comparison = 0;
 
       if (sortField === 'date') {
-        comparison = a.timestamp - b.timestamp;
+        comparison = a.createdAt - b.createdAt;
       } else if (sortField === 'time') {
         // Handle DNF and +2 penalties for time sorting
         const timeA =

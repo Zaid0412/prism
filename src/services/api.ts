@@ -4,7 +4,7 @@ export interface Solve {
   id: string;
   time: number;
   scramble: string;
-  timestamp: number;
+  createdAt: number;
   state: 'none' | '+2' | 'DNF';
   puzzleType: string;
 }
@@ -30,7 +30,6 @@ class ApiClient {
       ...options,
     });
     if (!response.ok) {
-      console.log(token);
       throw new Error(`API request failed: ${response.status} ${response.statusText}`);
     }
     // If response is 204 No Content, return undefined

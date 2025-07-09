@@ -3,6 +3,8 @@ import { formatDistanceToNow } from 'date-fns';
 import { SolveModal } from './SolveModal';
 import { useAppDispatch } from '../../../app/hooks';
 import { deleteSolve, updateSolve, updateSolveLocal } from '../solvesSlice';
+import { useUser } from '@clerk/clerk-react';
+import { deleteSolveLocal } from '../../solves/solvesSlice';
 
 interface SolveProps {
   solve: {
@@ -11,8 +13,7 @@ interface SolveProps {
     scramble: string;
     puzzleType: string;
     state: 'none' | '+2' | 'DNF';
-    timestamp: number;
-    createdAt?: string;
+    createdAt: number;
   };
   index: number;
   totalSolves: number;
@@ -73,6 +74,7 @@ const formatPuzzleType = (puzzleType: string) => {
 export const Solve: React.FC<SolveProps> = ({ solve, index, totalSolves }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const dispatch = useAppDispatch();
+  const { isSignedIn } = useUser();
 
   const handleClick = () => {
     setIsModalOpen(true);
@@ -83,7 +85,11 @@ export const Solve: React.FC<SolveProps> = ({ solve, index, totalSolves }) => {
   };
 
   const handleDelete = () => {
-    dispatch(deleteSolve(solve.id));
+    if (isSignedIn) {
+      dispatch(deleteSolve(solve.id));
+    } else {
+      dispatch(deleteSolveLocal(solve.id));
+    }
     setIsModalOpen(false);
   };
 
@@ -123,13 +129,13 @@ export const Solve: React.FC<SolveProps> = ({ solve, index, totalSolves }) => {
             {formatTime(solve.time, solve.state)}
           </span>
           <span className='text-xs text-gray-400'>
-            {formatDistanceToNow(new Date(solve.createdAt ?? solve.timestamp ?? Date.now()))}
+            {formatDistanceToNow(new Date(solve.createdAt ?? Date.now()))}
           </span>
         </div>
       </li>
 
       <SolveModal
-        solve={{ ...solve, createdAt: solve.createdAt ?? String(solve.timestamp) }}
+        solve={{ ...solve }}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onDelete={handleDelete}

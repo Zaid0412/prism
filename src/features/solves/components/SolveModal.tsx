@@ -10,8 +10,7 @@ interface SolveModalProps {
     scramble: string;
     puzzleType: string;
     state: 'none' | '+2' | 'DNF';
-    timestamp: number;
-    createdAt: string;
+    createdAt: number;
   };
   isOpen: boolean;
   onClose: () => void;

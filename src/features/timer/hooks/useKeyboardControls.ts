@@ -4,6 +4,8 @@ import { updateSolve, deleteSolve } from '../../solves/solvesSlice';
 import { createSolve } from '../../solves/solvesSlice';
 import { useUser } from '@clerk/clerk-react';
 import { addSolveLocal } from '../../solves/solvesSlice';
+import { updateSolveLocal } from '../../solves/solvesSlice';
+import { deleteSolveLocal } from '../../solves/solvesSlice';
 
 interface Solve {
   id: string;
@@ -11,7 +13,7 @@ interface Solve {
   scramble: string;
   puzzleType: string;
   state: 'none' | '+2' | 'DNF';
-  timestamp: number;
+  createdAt: number;
 }
 
 export const useKeyboardControls = (
@@ -47,7 +49,12 @@ export const useKeyboardControls = (
     }
     if (currentSolve) {
       const newState = currentSolve.state === '+2' ? 'none' : '+2';
-      dispatch(updateSolve({ id: currentSolve.id, solve: { state: newState } }));
+      // Optimistically update UI
+      dispatch(updateSolveLocal({ id: currentSolve.id, solve: { state: newState } }));
+      // Then sync with backend if logged in
+      if (isSignedIn) {
+        dispatch(updateSolve({ id: currentSolve.id, solve: { state: newState } }));
+      }
       if (currentSolve === solves[solves.length - 1]) {
         resetTimer();
         const newTime = newState === '+2' ? currentSolve.time + 2000 : currentSolve.time;
@@ -65,7 +72,12 @@ export const useKeyboardControls = (
     }
     if (currentSolve) {
       const newState = currentSolve.state === 'DNF' ? 'none' : 'DNF';
-      dispatch(updateSolve({ id: currentSolve.id, solve: { state: newState } }));
+      // Optimistically update UI
+      dispatch(updateSolveLocal({ id: currentSolve.id, solve: { state: newState } }));
+      // Then sync with backend if logged in
+      if (isSignedIn) {
+        dispatch(updateSolve({ id: currentSolve.id, solve: { state: newState } }));
+      }
       if (currentSolve === solves[solves.length - 1]) {
         resetTimer();
         const newTime = newState === 'DNF' ? 0 : currentSolve.time;
@@ -82,7 +94,10 @@ export const useKeyboardControls = (
       currentSolve = solves[solves.length - 1];
     }
     if (currentSolve) {
-      dispatch(deleteSolve(currentSolve.id));
+      dispatch(deleteSolveLocal(currentSolve.id)); 
+      if (isSignedIn) {
+        dispatch(deleteSolve(currentSolve.id));
+      }
       setCurrentSolveId(null); // Clear current solve ID after deletion
       setJustDeleted(true);
       resetTimer(); // Reset the timer display to 0.00
@@ -111,7 +126,7 @@ export const useKeyboardControls = (
             scramble: currentScramble,
             puzzleType: puzzleType,
             state: "none" as "none",
-            timestamp: Date.now(),
+            createdAt: Date.now(),
             id: newSolveId,
           };
           if (isSignedIn) {
