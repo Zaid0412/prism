@@ -55,7 +55,7 @@ export const useTimer = (puzzleType: string) => {
     const solve = {
       time,
       scramble,
-      timestamp: Date.now(),
+      createdAt: Date.now(),
       state,
       puzzleType,
     };

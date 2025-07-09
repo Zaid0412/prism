@@ -2,7 +2,7 @@ export interface Solve {
   id: string;
   time: number; // milliseconds
   scramble: string;
-  timestamp: number;
+  createdAt: number;
   puzzleType: string;
   state: 'none' | '+2' | 'DNF';
 }
