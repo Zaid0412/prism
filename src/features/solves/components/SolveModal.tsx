@@ -20,7 +20,7 @@ interface SolveModalProps {
   onDNF?: () => void;
 }
 
-const formatTime = (ms: number, state: 'none' | '+2' | 'DNF') => {
+export const formatTime = (ms: number, state: 'none' | '+2' | 'DNF') => {
   if (state === 'DNF') {
     return 'DNF';
   }

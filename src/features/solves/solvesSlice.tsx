@@ -74,7 +74,7 @@ const solvesSlice = createSlice({
   },
   reducers: {
     addSolveLocal: (state, action: PayloadAction<Solve>) => {
-      state.solves.push(action.payload);
+      state.solves.unshift(action.payload);
       // Save to localStorage
       localStorage.setItem('solves', JSON.stringify(state.solves));
     },
@@ -116,7 +116,7 @@ const solvesSlice = createSlice({
         state.error = action.error.message || 'Failed to fetch solves';
       })
       .addCase(createSolve.fulfilled, (state, action) => {
-        state.solves.push(action.payload);
+        state.solves.unshift(action.payload);
       })
       .addCase(updateSolve.fulfilled, (state, action) => {
         const index = state.solves.findIndex((s) => s.id === action.payload.id);
